@@ -1,0 +1,31 @@
+<head>
+</head>
+
+<body>
+	<h1>Fortune's Algorithm for Computing Voronoi Diagrams</h1>
+	<h3>A COS 451 Project by Sam Lichtenberg</h3>
+
+	<canvas id="a" width="800" height="500"></canvas><br><br>
+	<input type="number" value="100" id="quantity" min="1" max="1000"> Number of Points</input><br>
+	Or use a point file: <input type="file" id="pointfile"></input><br>
+	(Points should be listed in "x y newline" format, with no newline after the last point)<br>
+	<input type="radio" name="graphic" value="1" checked>Animation<br>
+	<input type="radio" name="graphic" value="2" >Diagram<br>
+	<input type="radio" name="graphic" value="3" >Computation Only<br>
+	<button type="submit" id="but1">Compute Diagram</button><br>
+	<text>Running time: (in milliseconds):</text> <text id="algtime"></text><br><br>
+	Voronoi vertices: <br>
+	<textarea rows="8" cols="50" id="ta" ></textarea><br>
+	Voronoi edges: <br>
+	<textarea rows="16" cols="100" id="tae" ></textarea><br>
+	<br><br><br>
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+<script type="text/javascript" src="closure-library/closure/goog/base.js"></script>
+<script>
+	goog.require('goog.structs.PriorityQueue');
+</script>
+<script src="structs.js"></script> 
+<script src="avl.js"></script>
+<script src="fortune.js"></script>
+<script src="index.js"></script>
