@@ -1,13 +1,3 @@
-// returns an array of n random pts
-function generatePts(n) {
-	var P = [];
-	for (var i = 0; i < n; i++) {
-		var s = new Site(Math.random()*800, Math.random()*500);
-		P.push(s);
-	}
-	return P;
-}
-
 // input: P, an array (?) of sorted point objects
 // output: Voronoi diagram inside a bounding box in a doubly-connected edge list D
 var last_added = null;
