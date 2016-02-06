@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
+<meta charset="utf-8">
 <style>
 body {
   font-family: 'Helvetica Neue', 'HelveticaNeue', 'Helvetica', sans-serif;
@@ -9,31 +9,50 @@ body {
 }
 
 #but1 {
-/*  width: 150px;
-  height: 50px; */
+  line-height: 20px;
+  font-size: 18px;
+  margin-left: 30px;
+}
+
+span#head {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+span#radio {
+  display: none;
+}
+
+input#quantity {
   line-height: 18px;
   font-size: 16px;
+  width: 50px;
+  border: 0px;
+  text-align: center;
+  border-bottom: 1px solid black;
+  margin-left: 10px;
 }
+
 </style>
 </head>
-<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-<meta content="utf-8" http-equiv="encoding">
+<meta charset="utf-8">
 <body>
-	<h1>Fortune's Algorithm for Computing Voronoi Diagrams</h1>
-	<canvas id="a" width="800" height="500"></canvas><br><br>
-        <input type="number" value="100" id="quantity" min="1" max="1000"> Number of Points</input><br><br>
-        <input type="radio" name="graphic" value="1" checked>Animation<br>
-        <input type="radio" name="graphic" value="2" >Diagram</button><br><br>
-	<button type="submit" id="but1">Start!</button><br>
+<span id="head">Fortune's Algorithm for Voronoi Diagrams</span><br><br>
+  Number of random points: <input type="number" value="100" id="quantity" min="1" max="1000"></input>
+  <span id="radio">
+    <input type="radio" name="graphic" value="1" checked>Show me the animation!<br>
+    <input type="radio" name="graphic" value="2" >I just want the result.</button><br>
+  </span>
+  <button type="submit" id="but1">Run</button><br><br>
+  <canvas id="a" width="800" height="500"></canvas><br><br>
 </body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
 <script type="text/javascript" src="closure-library/closure/goog/base.js"></script>
 <script>
-	goog.require('goog.structs.PriorityQueue');
+goog.require('goog.structs.PriorityQueue');
 </script>
 <script src="structs.js"></script> 
 <script src="utils.js"></script>
 <script src="avl.js"></script>
 <script src="fortune.js"></script>
 <script src="index.js"></script>
-</html>

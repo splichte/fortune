@@ -49,10 +49,7 @@ function handleFileSelect(evt) {
 	}
 }
 $(document).ready(function() {
-/*	var pf = document.getElementById('pointfile');
-	pf.addEventListener('change', handleFileSelect, false);*/
-	
-        var canvas = document.getElementById("a");
+  var canvas = document.getElementById("a");
 	ctx = canvas.getContext("2d");
 	ctx.lineWidth=0.5;
 	ctx.strokeRect(0, 0, BOXW, BOXL);
@@ -73,12 +70,8 @@ $(document).ready(function() {
 		Q = new goog.structs.PriorityQueue();
 		sweepline = 0.0;
 		finished = false;
-/*		if (pf.value=="") {	
-			var n = $('#quantity').val();
-			P = generatePts(n);
-		}*/
-                var n = $('#quantity').val();
-                P = generatePts(n);
+    var n = $('#quantity').val();
+    P = generatePts(n);
 		var anim = parseInt($('[name="graphic"]:checked').val());
 		start_time = Date.now();
 		VoronoiDiagram(anim);
@@ -128,4 +121,5 @@ $(document).ready(function() {
 			}
 		}, 1000);
 	});
+  $('#but1').click();
 });
