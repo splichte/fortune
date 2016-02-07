@@ -1,20 +1,21 @@
 // all globals go here!
-var ctx;
-var offx, offy; // offset of the box
-var BOXW, BOXL; // box width and length
-BOXW = 800;
-BOXL = 500;
-var BOUNDW, BOUNDL, MINBOUNDW, MINBOUNDL; // same as BOXW, BOXL for now
-BOUNDW = BOXW;
-BOUNDL = BOXL;
-MINBOUNDW = 0;
-MINBOUNDL = 0;
+// 02-06-2016: what the f**k do any of these do you idiot
+var ctx; // canvas object
+var BOXW = 600, 
+    BOXL = 250; // canvas width and length
+
+var BOUNDW = BOXW, 
+    BOUNDL = BOXL, 
+    MINBOUNDW = 0, 
+    MINBOUNDL = 0; // not sure why these exist
+
 var P, T, D, Q, sweepline, finished, speed;
 var timeouts = [];
 var finish = null;
 var contents;
 var nochange = false;
 var start_time, end_time;
+
 function filled_circle(cx, cy, rad, color) {
 	ctx.beginPath();
 	ctx.arc(cx, cy, rad, 0, 2*Math.PI, false);
@@ -22,6 +23,7 @@ function filled_circle(cx, cy, rad, color) {
 	else ctx.fillStyle = 'blue';
 	ctx.fill();
 }
+
 function fillP(contents) {
 	if (nochange) return;
 	P = [];
