@@ -19,8 +19,6 @@ function AVLtree() {
 		var neighbors = [];		
 		if (this.root==null) return null;
 		else {
-//			neighbors.push(this.get_left_neighbor(y, q));
-//			neighbors.push(this.get_right_neighbor(y, q));
 			neighbors.push(this.gln_node(q));
 			neighbors.push(this.grn_node(q));
 			return neighbors;
@@ -185,8 +183,8 @@ function AVLtree() {
 	this.parabolic = function(px, py, x, ly) {
 		return (1/(2*(py-ly)))*(x*x-2*px*x+px*px+py*py-ly*ly);
 	};
-	this.handle_he = function() {
-		this.root.handle_he();	
+	this.handle_halfedges = function() {
+		this.root.handle_halfedges();	
 	};
 	this.update_lr = function(n) {
 		var val;
@@ -444,7 +442,11 @@ function Node(value, height, par, l_child, r_child) {
 		if (this.l_child == null && this.r_child == null) return true;
 		else return false;
 	};
-	this.handle_he = function () {
+	this.handle_halfedges = function () {
+    // what is the purpose of this function?
+    // we need to 
+    // what does it mean to "handle half-edges"?
+
 		if (this.isLeaf()) return;
 		else {
 			var x = this.x(sweepline-1);
@@ -457,17 +459,17 @@ function Node(value, height, par, l_child, r_child) {
 			if (y < this.value.start.y) {
 				// test x=minboundw, y=minboundl
 				if (x < this.value.start.x) {
-					xinter = x-(y-MINBOUNDL)/slope;
-					if (xinter > MINBOUNDW && xinter < BOUNDW) end = new Site(xinter, MINBOUNDL);
+					xinter = x-y/slope;
+					if (xinter > 0 && xinter < BOUNDW) end = new Site(xinter, 0);
 					else {
-						yinter = y-slope*(x-MINBOUNDW);
-						end = new Site(MINBOUNDW, yinter);
+						yinter = y-slope*x;
+						end = new Site(0, yinter);
 					}
 				}
 				// test x=boundw, y=minboundl
 				else {
-					xinter = x-(y-MINBOUNDL)/slope;
-					if (xinter > MINBOUNDW && xinter < BOUNDW) end = new Site(xinter, MINBOUNDL);
+					xinter = x-y/slope;
+					if (xinter > 0 && xinter < BOUNDW) end = new Site(xinter, 0);
 					else {
 						yinter = y-slope*(x-BOUNDW);
 						end = new Site(BOUNDW, yinter);
@@ -478,16 +480,16 @@ function Node(value, height, par, l_child, r_child) {
 				// test x=minboundw, y=boundl
 				if (x < this.value.start.x) {
 					xinter = x-(y-BOUNDL)/slope;
-					if (xinter > MINBOUNDW && xinter < BOUNDW) end = new Site(xinter, BOUNDL);
+					if (xinter > 0 && xinter < BOUNDW) end = new Site(xinter, BOUNDL);
 					else {
-						yinter = y-slope*(x-MINBOUNDW);
-						end = new Site(MINBOUNDW, yinter);
+						yinter = y-slope*x;
+						end = new Site(0, yinter);
 					}
 				}
 				// test x=boundw, y=boundl
 				else {
 					xinter = x-(y-BOUNDL)/slope;
-					if (xinter > MINBOUNDW && xinter < BOUNDW) end = new Site(xinter, BOUNDL);
+					if (xinter > 0 && xinter < BOUNDW) end = new Site(xinter, BOUNDL);
 					else {
 						yinter = y-slope*(x-BOUNDW);
 						end = new Site(BOUNDW, yinter);
@@ -495,8 +497,8 @@ function Node(value, height, par, l_child, r_child) {
 				}
 			}
 			D.E.push(new Edge(this.value.start, end, this.value.site1, this.value.site2));
-			this.l_child.handle_he();
-			this.r_child.handle_he();
+			this.l_child.handle_halfedges();
+			this.r_child.handle_halfedges();
 		}
 	}
 	this.x = function(ly) { // pos of sweep line

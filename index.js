@@ -1,91 +1,50 @@
-// all globals go here!
-// 02-06-2016: what the f**k do any of these do you idiot
+// ==================== GLOBAL VARIABLES ======================
 var ctx; // canvas object
 var BOXW = 600, 
     BOXL = 250; // canvas width and length
 
 var BOUNDW = BOXW, 
-    BOUNDL = BOXL, 
-    MINBOUNDW = 0, 
-    MINBOUNDL = 0; // not sure why these exist
+    BOUNDL = BOXL; // not sure why these exist
 
 var P, T, D, Q, sweepline, finished, speed;
+// P - list of points
+// T - sweepline tree
+// D - edges the algorithm has found
+// Q - priority queue of events
+// sweepline - a number indicating sweepline's vertical position
+// finished - true when Q has no more events to process
+// speed - how fast to animate the sweepline
+
 var timeouts = [];
 var finish = null;
-var contents;
-var nochange = false;
-var start_time, end_time;
+var nochange = false; // checks if we need to reset computation?
 
-function filled_circle(cx, cy, rad, color) {
-	ctx.beginPath();
-	ctx.arc(cx, cy, rad, 0, 2*Math.PI, false);
-	if (color==0) ctx.fillStyle = 'red';
-	else ctx.fillStyle = 'blue';
-	ctx.fill();
+// ====================== END GLOBAL ===========================
+
+function fill_test_P() {
+  var P = [];
+  P.push(new Site(536.0503579276191, 160.67875172331665));
+  P.push(new Site(314.2389601099687, 222.35578512883797));
+  P.push(new Site(439.74570183839177, 16.44121591225836));
+  P.push(new Site(401.3698397813927, 160.51519971607482));
+  P.push(new Site(366.99666329921894, 14.524960946810495));
+  return P;
 }
 
-function fillP(contents) {
-	if (nochange) return;
-	P = [];
-	var points = contents.split("\n");
-	for (var i = 0; i < points.length-1; i++) { // make this more robust later
-		var pt = points[i].split(" ")
-		var x = parseFloat(pt[0]);
-		var y = parseFloat(pt[1]);
-		P.push(new Site(x, y));	
-	}
-}
-function handleFileSelect(evt) {
-	var file = evt.target.files[0];
-	if (file) {
-		var r = new FileReader();
-		r.onload = function(e) {
-			var contents = e.target.result;
-			fillP(contents);
-		}
-		r.readAsText(file);
-		
-	}
-	else {
-		alert('uh oh file problems');
-	}
-}
 $(document).ready(function() {
-  var canvas = document.getElementById("a");
-	ctx = canvas.getContext("2d");
-	ctx.lineWidth=0.5;
-	ctx.strokeRect(0, 0, BOXW, BOXL);
-	$('#but1').click(function() {
+  init_ctx();
 
-		nochange = true;
-		for (var i = 0; i < timeouts.length; i++) {
-			clearTimeout(timeouts[i]);
-		}
-		if (finish!=null) {
-			clearInterval(finish);
-		}
-		// should clear everything starting...now
-		ctx.clearRect(0, 0, BOXW, BOXL);
-		ctx.strokeRect(0, 0, BOXW, BOXL);
-		T = new AVLtree(); // is not a proper AVL tree; the rebalancing operations are commented out
-		D = new dcel(); // is not a proper DCEL; only used to maintain lists of vertices and edges
-		Q = new goog.structs.PriorityQueue();
-		sweepline = 0.0;
-		finished = false;
-    var n = $('#quantity').val();
-    P = generatePts(n);
-		var anim = parseInt($('[name="graphic"]:checked').val());
-		start_time = Date.now();
-		VoronoiDiagram(anim);
-		if (anim!=3) {
-			for (var i = 0; i < P.length; i++) {
-				filled_circle(P[i].x, P[i].y, 2, 0);
-			}
-		}
+	$('#but1').click(function() {
+    reset_state();
+    P = fill_test_P();
+
+		run_fortune();
+
+    for (var i = 0; i < P.length; i++) {
+      filled_circle(P[i].x, P[i].y, 2, 0);
+    }
 		var s = setInterval(function() {
 			if (finished) {
-				var y = end_time-start_time;	
-				$("#algtime").text(y);
 				clearInterval(s);
 				nochange = false;
 				var pts_str = "";
