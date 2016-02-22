@@ -1,36 +1,3 @@
-// ==================== GLOBAL VARIABLES ======================
-var ctx; // canvas object
-var BOXW = 600, 
-    BOXL = 250; // canvas width and length
-
-var BOUNDW = BOXW, 
-    BOUNDL = BOXL; // not sure why these exist
-
-var P, T, D, Q, sweepline, finished, speed;
-// P - list of points
-// T - sweepline tree
-// D - edges the algorithm has found
-// Q - priority queue of events
-// sweepline - a number indicating sweepline's vertical position
-// finished - true when Q has no more events to process
-// speed - how fast to animate the sweepline
-
-var timeouts = [];
-var finish = null;
-var nochange = false; // checks if we need to reset computation?
-
-// ====================== END GLOBAL ===========================
-
-function fill_test_P() {
-  var P = [];
-  P.push(new Site(536.0503579276191, 160.67875172331665));
-  P.push(new Site(314.2389601099687, 222.35578512883797));
-  P.push(new Site(439.74570183839177, 16.44121591225836));
-  P.push(new Site(401.3698397813927, 160.51519971607482));
-  P.push(new Site(366.99666329921894, 14.524960946810495));
-  return P;
-}
-
 $(document).ready(function() {
   init_ctx();
 
