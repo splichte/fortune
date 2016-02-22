@@ -7,6 +7,10 @@ function same_sites(a,b) {
 	else return false;
 }
 
+function is_inside_box(x) {
+  return (x > 0 && x < BOWX);
+}
+
 function approx_equal(a,b) {
 	if (Math.abs(a-b) < 0.0000001) return true;
 	else return false;
@@ -183,8 +187,8 @@ function AVLtree() {
 	this.parabolic = function(px, py, x, ly) {
 		return (1/(2*(py-ly)))*(x*x-2*px*x+px*px+py*py-ly*ly);
 	};
-	this.handle_halfedges = function() {
-		this.root.handle_halfedges();	
+	this.handle_half_edges = function() {
+		this.root.handle_half_edges();	
 	};
 	this.update_lr = function(n) {
 		var val;
@@ -265,12 +269,6 @@ function AVLtree() {
 				this.update_rl(grandparent.l_child);
 			}
 		}
-		// rebalance
-		var n = grandparent;
-		while (n != null) {
-			this.balance(n);
-			n = n.par;
-		}
 	};
 	// replaces a leaf node with a subtree
 	// need to update heights and rebalance - same step
@@ -298,14 +296,6 @@ function AVLtree() {
 		p_jk.par = par;
 		p_k.par = p_jk;
 
-		// now go backwards up tree, adjust heights and balance
-		var n = p_jk;
-		while (n != null) {
-			var max = Math.max(n.l_child.height, n.r_child.height);
-			n.height = max+1;
-			this.balance(n);
-			n = n.par;
-		}
 		return p_j;
 	};
 	this.get_middle = function(a, b) {
@@ -389,45 +379,6 @@ function AVLtree() {
 		if (sy > y) return true;
 		else return false;
 	};
-	this.balance = function(n) {
-		if (n.isLeaf()) return;
-		var r = n.r_child;
-		var l = n.l_child;
-		if (n.height != Math.max(r.height, l.height)+1) {
-			n.height = Math.max(r.height, l.height)+1;
-		}
-	//	var balance_factor = l.height - r.height; // commented out before
-	//	if (balance_factor < -1 || balance_factor > 1) {
-	//		// check which needs adjusting
-	//		if (r.height > l.height) {
-	//			// this could break
-	//			var rl = r.l_child;
-	//			var rr = r.r_child;
-	//			if (rl.height > rr.height) {
-	//				// right rotate right subtree
-	//				r.right_rotate(this);
-	//				// left rotate tree
-	//				n.left_rotate(this);
-	//			}
-	//			else {
-	//				n.left_rotate(this);	
-	//			}
-	//		}
-	//		else {
-	//			var ll = l.l_child;
-	//			var lr = l.r_child;
-	//			if (lr.height > ll.height) {
-	//				// left rotate left subtree
-	//				l.left_rotate(this);
-	//				// right rotate tree
-	//				n.right_rotate(this);
-	//			}
-	//			else {
-	//				n.right_rotate(this);
-	//			}
-	//		}
-	//	}
-	};
 }
 
 // needs height-adjusting as part of this
@@ -442,11 +393,7 @@ function Node(value, height, par, l_child, r_child) {
 		if (this.l_child == null && this.r_child == null) return true;
 		else return false;
 	};
-	this.handle_halfedges = function () {
-    // what is the purpose of this function?
-    // we need to 
-    // what does it mean to "handle half-edges"?
-
+	this.handle_half_edges = function () {
 		if (this.isLeaf()) return;
 		else {
 			var x = this.x(sweepline-1);
@@ -496,9 +443,10 @@ function Node(value, height, par, l_child, r_child) {
 					}
 				}
 			}
-			D.E.push(new Edge(this.value.start, end, this.value.site1, this.value.site2));
-			this.l_child.handle_halfedges();
-			this.r_child.handle_halfedges();
+
+      D.E.push(new Edge(this.value.start, end, this.value.site1, this.value.site2));
+			this.l_child.handle_half_edges();
+			this.r_child.handle_half_edges();
 		}
 	}
 	this.x = function(ly) { // pos of sweep line
@@ -532,13 +480,12 @@ function Node(value, height, par, l_child, r_child) {
 			else return Math.min(s1, s2);
 		}
 	};
-	this.inside_box = function(inside_box) {
-		if (this.l_child!=null) this.l_child.inside_box(inside_box);
-		if (!this.isLeaf()) {
-			if (this.x(sweepline) > 0 && this.x(sweepline) < BOXW) 
-				inside_box.push(this);
-		}
-		if (this.r_child!=null) this.r_child.inside_box(inside_box);
+	this.is_inside_box = function(inside_box) {
+		if (this.l_child!=null) this.l_child.is_inside_box(inside_box);
+		if (!this.isLeaf() && is_inside_box(this.x(sweepline))) {
+      inside_box.push(this);
+    }
+		if (this.r_child!=null) this.r_child.is_inside_box(inside_box);
 	};
 	this.fill_list = function(leaves, bps, ly) {
 		if (this.l_child!=null) this.l_child.fill_list(leaves, bps, ly);
@@ -562,42 +509,6 @@ function Node(value, height, par, l_child, r_child) {
 	this.other_child = function(c) {
 		if (c==this.l_child) return this.r_child;
 		else return this.l_child;
-	};
-	// when right tree is heavy
-	this.left_rotate = function(T) {
-		var b = this.r_child;
-		var c = b.l_child;
-		var par = this.par;
-		this.r_child = c;
-		b.par = par;
-		if (par != null) {
-			if (par.l_child==this) par.l_child = b;
-			else par.r_child = b;
-		}
-		else T.root = b;
-		b.l_child = this;
-		this.par = b;
-		if (c != null) c.par = this;
-		this.height = Math.max(c.height, this.l_child.height)+1;
-		b.height = Math.max(this.height, b.r_child.height)+1;
-	};
-	// when left tree is heavy
-	this.right_rotate = function(T) {
-		var b = this.l_child;
-		var c = b.r_child;
-		var par = this.par;
-		this.l_child = c;
-		b.par = par;
-		if (par != null) {
-			if (par.l_child==this) par.l_child=b;
-			else par.r_child=b;
-		}
-		else T.root = b;
-		b.r_child = this;
-		this.par = b;
-		if (c != null) c.par = this;
-		this.height = Math.max(c.height, this.r_child.height)+1;
-		b.height = Math.max(this.height, b.l_child.height)+1;
 	};
 }
 

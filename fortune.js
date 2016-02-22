@@ -1,8 +1,14 @@
 // input: P, an array of sorted points
 // output: Voronoi diagram points and edges
 
+//======================= GLOBALS =============================
+
 // what is this? a global so the tree can access?
 var last_added = null;
+
+// animation globals
+var mult_factor = 30;
+var incr = 1;
 
 // what are these?
 // I think these are used to determine when 
@@ -14,66 +20,71 @@ var miny = Number.POSITIVE_INFINITY;
 var maxx = Number.NEGATIVE_INFINITY;
 var minx = Number.POSITIVE_INFINITY;
 
-function update_box_bounds(site) {
+//======================== END GLOBALS =========================
+
+//======================== UTILITY FUNCTIONS ===================
+
+function update_box_and_sweepline(site) {
 	if (site.y > maxy) maxy = site.y;
 	if (site.x > maxx) maxx = site.x;
 	if (site.y < miny) miny = site.y;
 	if (site.x < minx) minx = site.x;
+
+  sweepline = site.y;
 }
 
 function get_next_event() {
 		var e = Q.dequeue();
-
     while (e.deleted) {
 			e = Q.dequeue();
 			if (Q.isEmpty()) {
 				finished = true;
-				HandleHalfEdges();
+				handle_half_edges();
 				return null;
 			}
 		}
     return e;
 }
 
+function handle_event(e) {
+	if (e.isSiteEvent()) {
+		last_added = e.site;
+		D.F.push(new Face(e.site));
+		handle_site_event(e.site);
+	}
+	else {
+		handle_circle_event(e);
+	}
+}
+
+//======================== END UTILITY FUNCTIONS =================
+
 function step_algorithm() {
+
+  // this is bad coding. we shouldn't be 
+  // calling the function if it finished already.
+
 	if (!finished) {
 
     // get a new event
 		var e = get_next_event();
     if (e === null) return;
 
-    update_box_bounds(e.site);
+    update_box_and_sweepline(e.site);
 
-		sweepline = e.site.y;
-		if (e.isSiteEvent()) {
-			last_added = e.site;
-			D.F.push(new Face(e.site));
-			HandleSiteEvent(e.site);
-		}
-		else {
-			HandleCircleEvent(e);
-		}
-	}
-  // this is the problem. 
-  // for the behavior to look correct, we'd like 
-  // to first carry the beach line to the end of the box.
-	if (Q.isEmpty()) {
-		HandleHalfEdges();
-		finished=true;
-	}
+    handle_event(e);
+  }
 }
 
-function HandleHalfEdges() {
+function handle_half_edges() {
 	BOUNDW = Math.max(BOXW, maxx+1);
 	BOUNDL = Math.max(BOXL, maxy+1);
 	MINBOUNDW = Math.min(0, minx-1);
 	MINBOUNDL = Math.min(0, miny-1);
-	T.handle_halfedges();
+	T.handle_half_edges();
 }
 
 function step_animation() {
-	var mult_factor = 30;
-	var incr = 1;
 	step_algorithm();
 	drawer(P);
 	
@@ -86,10 +97,10 @@ function step_animation() {
 				drawer(P);
 			}, mult_factor*incr*i));
 		}
-	}
-	if (finished) {
+	} else {
 		var inside_box = [];
-		T.root.inside_box(inside_box);
+    // so many side-effects...
+		T.root.is_inside_box(inside_box);
 		finish = setInterval(function() {
 			sweepline -= incr;
 			if (inside_box.length==0) clearInterval(finish);
@@ -97,7 +108,6 @@ function step_animation() {
 				var n = inside_box[i];
 				if (n.x(sweepline) < 0 || n.x(sweepline) > BOXW) {
 					inside_box.splice(i, 1);
-					//n.value.edge.stop = new Site(n.x(sweepline), T.parabolic(n.value.site1.x, n.value.site1.y, n.x(sweepline), sweepline));
 				}
 			}
 			drawer(P);
@@ -156,7 +166,7 @@ function drawer(P) {
 	T.drawtree(sweepline);
 }
 
-function HandleSiteEvent(p_i) {
+function handle_site_event(p_i) {
 	if (T.isEmpty()) { T.insert(p_i); return; }
 	var p_j = T.verticallyAbove(p_i, sweepline);
 	if (p_j.ptr != null) {
@@ -172,7 +182,7 @@ function HandleSiteEvent(p_i) {
 	}
 }
 
-function StoreNewEdges(mid1, mid2, n0, g, n1) {
+function store_new_edges(mid1, mid2, n0, g, n1) {
 	var e1 = new Edge();
 	e1.start = mid1.value.start; // ideally don't use this
 	e1.lface = n0.value.site;
@@ -188,12 +198,12 @@ function StoreNewEdges(mid1, mid2, n0, g, n1) {
 }
 
 // still need to flip over to AVL tree
-function HandleCircleEvent(g) {
+function handle_circle_event(g) {
 	var neighbors = T.neighbors(g.ptr);
 	var mid1 = T.get_middle(neighbors[0], g.ptr);
 	var mid2 = T.get_middle(g.ptr, neighbors[1]);
 	// store the disappearing edges
-	StoreNewEdges(mid1, mid2, neighbors[0], g, neighbors[1]);
+	store_new_edges(mid1, mid2, neighbors[0], g, neighbors[1]);
 	T.remove(g.ptr); 
 	var mid = T.get_middle(neighbors[0], neighbors[1]);
 	mid.value.start = g.center;
