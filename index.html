@@ -1,51 +1,30 @@
 <!DOCTYPE html>
 <head>
 <meta charset="utf-8">
-<style>
-body {
-  font-family: 'Helvetica Neue', 'HelveticaNeue', 'Helvetica', sans-serif;
-  opacity: 0.7;
-  width: 850px;
-  margin-left: 75px;
-  margin-top: 50px;
-}
-#but1 {
-  line-height: 20px;
-  font-size: 18px;
-  margin-left: 30px;
-}
-
-span#head {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-span#radio {
-  display: none;
-}
-
-input#quantity {
-  line-height: 18px;
-  font-size: 16px;
-  width: 50px;
-  border: 0px;
-  text-align: center;
-  border-bottom: 1px solid black;
-  margin-left: 10px;
-}
-
-</style>
+<link rel="stylesheet" type="text/css" href="index.css"></link>
 </head>
-<meta charset="utf-8">
 <body>
 <span id="head">Fortune's Algorithm for Voronoi Diagrams</span><br><br>
   Number of random points: <input type="number" value="100" id="quantity" min="1" max="1000"></input>
-  <span id="radio">
-    <input type="radio" name="graphic" value="1" checked>Show me the animation!<br>
-    <input type="radio" name="graphic" value="2" >I just want the result.</button><br>
-  </span>
   <button type="submit" id="but1">Run</button><br><br>
-  <canvas id="a" width="600" height="250"></canvas><br><br>
+  <canvas id="a" width="600" height="400"></canvas><br><br>
+
+  <div id="description">
+<!--  "Liner Notes" go here.
+  Mathematical description of Voronoi diagrams.
+  Intuitive description.
+  Examples in Nature.
+  Examples in Engineering.
+  Interesting properties.
+  Uses in art (generative design book has an example).
+
+  What fortune's algorithm does:
+  Give a more intuitive, high-level description based on deBerg et al.
+
+
+  Further reading:
+  -->
+</div>
 </body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
 <script type="text/javascript" src="closure-library/closure/goog/base.js"></script>
@@ -66,4 +45,6 @@ goog.require('goog.structs.PriorityQueue');
 
 <script src="globals.js"></script>
 <script src="index_utils.js"></script>
+
+<!-- Entry Point -->
 <script src="index.js"></script>

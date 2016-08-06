@@ -1,6 +1,6 @@
 var ctx; // canvas object
 var BOXW = 600, 
-    BOXL = 250; // canvas width and length
+    BOXL = 400; // canvas width and length
 
 var BOUNDW = BOXW, 
     BOUNDL = BOXL; // not sure why these exist

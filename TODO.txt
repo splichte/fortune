@@ -1,0 +1,4 @@
++ Fix sweepline speed to be even, and not depend on the # of and distance between points.
++ Tidy up code without breaking it. Make it one file that you can attach to a canvas object, ideally. No global variables/functions, etc.
++ Remove the dependence on the closure library for the priority queue.
++ Make the binary search tree tree an AVL tree.

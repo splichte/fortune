@@ -1,0 +1,31 @@
+body {
+  font-family: 'Helvetica Neue', 'HelveticaNeue', 'Helvetica', sans-serif;
+  opacity: 0.7;
+  width: 850px;
+  margin-left: 75px;
+  margin-top: 50px;
+}
+#but1 {
+  line-height: 20px;
+  font-size: 18px;
+  margin-left: 30px;
+}
+
+span#head {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+span#radio {
+  display: none;
+}
+
+input#quantity {
+  line-height: 18px;
+  font-size: 16px;
+  width: 50px;
+  border: 0px;
+  text-align: center;
+  border-bottom: 1px solid black;
+  margin-left: 10px;
+}
